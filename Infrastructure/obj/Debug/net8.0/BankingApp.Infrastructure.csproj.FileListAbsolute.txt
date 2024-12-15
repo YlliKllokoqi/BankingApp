@@ -1,0 +1,17 @@
+C:\Users\yll_k\Ylli\.NET Projects\BankingApp\Infrastructure\bin\Debug\net8.0\BankingApp.Infrastructure.deps.json
+C:\Users\yll_k\Ylli\.NET Projects\BankingApp\Infrastructure\bin\Debug\net8.0\BankingApp.Infrastructure.runtimeconfig.json
+C:\Users\yll_k\Ylli\.NET Projects\BankingApp\Infrastructure\bin\Debug\net8.0\BankingApp.Infrastructure.dll
+C:\Users\yll_k\Ylli\.NET Projects\BankingApp\Infrastructure\bin\Debug\net8.0\BankingApp.Infrastructure.pdb
+C:\Users\yll_k\Ylli\.NET Projects\BankingApp\Infrastructure\bin\Debug\net8.0\BankingApp.Domain.dll
+C:\Users\yll_k\Ylli\.NET Projects\BankingApp\Infrastructure\bin\Debug\net8.0\BankingApp.Domain.pdb
+C:\Users\yll_k\Ylli\.NET Projects\BankingApp\Infrastructure\obj\Debug\net8.0\BankingApp.Infrastructure.csproj.AssemblyReference.cache
+C:\Users\yll_k\Ylli\.NET Projects\BankingApp\Infrastructure\obj\Debug\net8.0\BankingApp.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\yll_k\Ylli\.NET Projects\BankingApp\Infrastructure\obj\Debug\net8.0\BankingApp.Infrastructure.AssemblyInfoInputs.cache
+C:\Users\yll_k\Ylli\.NET Projects\BankingApp\Infrastructure\obj\Debug\net8.0\BankingApp.Infrastructure.AssemblyInfo.cs
+C:\Users\yll_k\Ylli\.NET Projects\BankingApp\Infrastructure\obj\Debug\net8.0\BankingApp.Infrastructure.csproj.CoreCompileInputs.cache
+C:\Users\yll_k\Ylli\.NET Projects\BankingApp\Infrastructure\obj\Debug\net8.0\BankingA.90A18F1F.Up2Date
+C:\Users\yll_k\Ylli\.NET Projects\BankingApp\Infrastructure\obj\Debug\net8.0\BankingApp.Infrastructure.dll
+C:\Users\yll_k\Ylli\.NET Projects\BankingApp\Infrastructure\obj\Debug\net8.0\refint\BankingApp.Infrastructure.dll
+C:\Users\yll_k\Ylli\.NET Projects\BankingApp\Infrastructure\obj\Debug\net8.0\BankingApp.Infrastructure.pdb
+C:\Users\yll_k\Ylli\.NET Projects\BankingApp\Infrastructure\obj\Debug\net8.0\BankingApp.Infrastructure.genruntimeconfig.cache
+C:\Users\yll_k\Ylli\.NET Projects\BankingApp\Infrastructure\obj\Debug\net8.0\ref\BankingApp.Infrastructure.dll

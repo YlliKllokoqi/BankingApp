@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "IkQFtEWYOyLNq3xEguPN0YHcvw9UJnNT/CPH2coa+7Y=",
+  "Source": "BankingApp.UI",
+  "BasePath": "_content/BankingApp.UI",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
