@@ -12,3 +12,4 @@ C:\Users\yll_k\Ylli\.NET Projects\BankingApp\Domain\obj\Debug\net8.0\refint\Bank
 C:\Users\yll_k\Ylli\.NET Projects\BankingApp\Domain\obj\Debug\net8.0\BankingApp.Domain.pdb
 C:\Users\yll_k\Ylli\.NET Projects\BankingApp\Domain\obj\Debug\net8.0\BankingApp.Domain.genruntimeconfig.cache
 C:\Users\yll_k\Ylli\.NET Projects\BankingApp\Domain\obj\Debug\net8.0\ref\BankingApp.Domain.dll
+C:\Users\yll_k\Ylli\.NET Projects\BankingApp\Domain\obj\Debug\net8.0\BankingApp.Domain.sourcelink.json

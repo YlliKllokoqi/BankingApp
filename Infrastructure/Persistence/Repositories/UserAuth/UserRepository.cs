@@ -15,102 +15,137 @@ public class UserRepository : IUserRepository
         _signInManager = signInManager;
     }
 
-    public async Task<ApplicationUser> LoginAsync(ApplicationUser user)
+    public async Task<Result<ApplicationUser>> LoginAsync(ApplicationUser user)
     {
         var appUser = await _userManager.FindByEmailAsync(user.Email);
-        if (appUser is not null)
+        if (appUser == null)
         {
-            var result = await _signInManager
-                .CheckPasswordSignInAsync(appUser, user.Password,false);
-
-            if (result.Succeeded)
+            return Result<ApplicationUser>.Failure(new ErrorResponse
             {
-                return appUser;
-            }
-            if (!result.Succeeded)
-            {
-                string errorMessage = $"Login failed for user {user.Email}. Reason: ";
-
-                if (result.IsLockedOut)
-                {
-                    errorMessage += "User is locked out.";
-                }
-                else if (result.IsNotAllowed)
-                {
-                    errorMessage += "User is not allowed to log in.";
-                }
-                else if (result.RequiresTwoFactor)
-                {
-                    errorMessage += "Two-factor authentication is required.";
-                }
-                else
-                {
-                    errorMessage += "Unknown reason.";
-                }
-
-                throw new Exception(errorMessage);
-            }
+                Message = "USER_NOT_FOUND",
+                Details = "User with the provided email does not exist."
+            });
         }
-        else
+
+        var result = await _signInManager.CheckPasswordSignInAsync(appUser, user.Password, false);
+
+        if (!result.Succeeded)
         {
-            throw new Exception("User does not exist.");
+            return Result<ApplicationUser>.Failure(new ErrorResponse
+            {
+                Message = "INVALID_CREDENTIALS",
+                Details = "Email/Password incorrect."
+            });
         }
-        
-        return null;
+
+        return Result<ApplicationUser>.Success(appUser);
     }
 
-    public async Task<ICollection<ApplicationUser>> GetAllUsersAsync()
+
+    public async Task<Result<ICollection<ApplicationUser>>> GetAllUsersAsync()
     {
-        return await _userManager.Users.ToListAsync();
+        var users = await _userManager.Users.ToListAsync();
+        if (!users.Any())
+        {
+            return Result<ICollection<ApplicationUser>>.Failure(new ErrorResponse
+            {
+                Message = "NO_USERS_FOUND",
+                Details = "There are no users in the database."
+            });
+        }
+
+        return Result<ICollection<ApplicationUser>>.Success(users);
     }
 
-    public async Task<ApplicationUser> FindByUserIdAsync(string userId)
+
+    public async Task<Result<ApplicationUser>> FindByUserIdAsync(string userId)
     {
         var user = await _userManager.FindByIdAsync(userId);
-        if (user is not null)
+        if (user == null)
         {
-            return user;
+            return Result<ApplicationUser>.Failure(new ErrorResponse
+            {
+                Message = "USER_NOT_FOUND",
+                Details = "No user found with the given ID."
+            });
         }
-        else
-        {
-            throw new Exception("User not found");
-        }
+
+        return Result<ApplicationUser>.Success(user);
     }
 
-    public async Task<bool> AddUserAsync(ApplicationUser user, string password)
+
+    public async Task<Result<bool>> AddUserAsync(ApplicationUser user, string password)
     {
         var result = await _userManager.CreateAsync(user, password);
-        return result.Succeeded;
+
+        if (!result.Succeeded)
+        {
+            return Result<bool>.Failure(new ErrorResponse
+            {
+                Message = "User Creation Failed",
+                Details = string.Join(',', result.Errors.Select(x => x.Description))
+            });
+        }
+        return Result<bool>.Success(true);
     }
 
-    public async Task<bool> DeleteUserAsync(string userId)
+    public async Task<Result<bool>> DeleteUserAsync(string userId)
     {
         var user = await _userManager.FindByIdAsync(userId);
-        if (user != null)
+        if (user == null)
         {
-            var result = await _userManager.DeleteAsync(user);
-            return result.Succeeded;
+            return Result<bool>.Failure(new ErrorResponse
+            {
+                Message = "USER_NOT_FOUND",
+                Details = "Cannot delete a user that does not exist."
+            });
         }
-        else
+
+        var result = await _userManager.DeleteAsync(user);
+        if (!result.Succeeded)
         {
-            return false;
+            return Result<bool>.Failure(new ErrorResponse
+            {
+                Message = "USER_DELETION_FAILED",
+                Details = string.Join("; ", result.Errors.Select(e => e.Description))
+            });
         }
+
+        return Result<bool>.Success(true);
     }
 
-    public async Task<bool> UpdateUserAsync(string userId, ApplicationUser appUser)
+
+    public async Task<Result<bool>> UpdateUserAsync(string userId, ApplicationUser appUser)
     {
         var user = await _userManager.FindByIdAsync(userId);
-        if (user is null) throw new Exception("User not found");
-        
-        if(!string.IsNullOrWhiteSpace(appUser.FirstName))
+        if (user == null)
+        {
+            return Result<bool>.Failure(new ErrorResponse
+            {
+                Message = "USER_NOT_FOUND",
+                Details = "Cannot update a user that does not exist."
+            });
+        }
+
+        if (!string.IsNullOrWhiteSpace(appUser.FirstName))
             user.FirstName = appUser.FirstName;
-        if(!string.IsNullOrWhiteSpace(appUser.LastName))
+        if (!string.IsNullOrWhiteSpace(appUser.LastName))
             user.LastName = appUser.LastName;
         if (!string.IsNullOrWhiteSpace(appUser.UserName) && appUser.UserName != user.UserName)
             user.UserName = appUser.UserName;
 
         var result = await _userManager.UpdateAsync(user);
 
-        return result.Succeeded;
+        if (!result.Succeeded)
+        {
+            return Result<bool>.Failure(new ErrorResponse
+            {
+                Message = "USER_UPDATE_FAILED",
+                Details = string.Join("; ", result.Errors.Select(e => e.Description))
+            });
+        }
+
+        return Result<bool>.Success(true);
     }
+
 }

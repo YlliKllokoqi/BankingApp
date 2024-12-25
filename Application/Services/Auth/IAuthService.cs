@@ -4,10 +4,10 @@ namespace BankingApp.Application.Services.Auth;
 
 public interface IAuthService
 {
-    Task<string> LoginAsync(LoginDto loginDto);
-    Task<ICollection<UserDto>> GetUsers();
-    Task<UserDto> FindByUserIdASync(string id);
-    Task<bool> RegisterUserAsync(RegisterDto registerDto);
-    Task<bool> DeleteUserAsync(string userId);
-    Task<bool> UpdateUserAsync(string userId, UpdateDto updateDto);
+    Task<ResultDto<string>> LoginAsync(LoginDto loginDto);
+    Task<ResultDto<ICollection<UserDto>>> GetUsers();
+    Task<ResultDto<UserDto>> FindByUserIdASync(string id);
+    Task<ResultDto<bool>> RegisterUserAsync(RegisterDto registerDto);
+    Task<ResultDto<bool>> DeleteUserAsync(string userId);
+    Task<ResultDto<bool>> UpdateUserAsync(string userId, UpdateDto updateDto);
 }
