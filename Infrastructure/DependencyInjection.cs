@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 public static class DependencyInjection
 {
-	public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
+	public static async Task<IServiceCollection> AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
 	{
 		services.AddDbContext<BankingDbContext>(options => options.UseNpgsql(configuration["ConnectionStrings:DefaultConnection"]));
 		services.AddIdentityCore<ApplicationUser>(options =>
@@ -29,6 +29,11 @@ public static class DependencyInjection
 		
 		services.AddScoped<IUserRepository, UserRepository>();
 
+		var serviceProvider = services.BuildServiceProvider();
+		var dbInittializer = serviceProvider.GetRequiredService<BankingDbInitializer>();
+		await dbInittializer.SeedRoles();
+		await dbInittializer.SeedAdminAsync();
+		
 		return services;
 	}
 }

@@ -58,7 +58,7 @@ public class UserRepository : IUserRepository
     }
 
 
-    public async Task<Result<ApplicationUser>> FindByUserIdAsync(string userId)
+    public async Task<Result<ApplicationUser>> FindUserById(string userId)
     {
         var user = await _userManager.FindByIdAsync(userId);
         if (user == null)
@@ -148,4 +148,19 @@ public class UserRepository : IUserRepository
         return Result<bool>.Success(true);
     }
 
+    public async Task<Result<bool>> AssignRoleAsync(ApplicationUser user, string role)
+    {
+        var result = await _userManager.AddToRoleAsync(user, role);
+
+        if (!result.Succeeded)
+        {
+            return Result<bool>.Failure(new ErrorResponse
+            {
+                Message = "ROLE_ASSIGNMENT_FAILED",
+                Details = string.Join("; ", result.Errors.Select(e => e.Description))
+            });
+        }
+
+        return Result<bool>.Success(true);
+    }
 }

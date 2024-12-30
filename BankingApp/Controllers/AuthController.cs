@@ -61,6 +61,7 @@ public class AuthController : ControllerBase
         return Ok(new { message = "User updated successfully" });
     }
 
+    [Authorize(Policy ="AdminPolicy")]
     [HttpDelete("delete/{userId}")]
     public async Task<IActionResult> Delete(string userId)
     {
@@ -72,5 +73,15 @@ public class AuthController : ControllerBase
         return Ok(new { message = "User deleted successfully" });
     }
 
-
+    [Authorize(Policy = "AdminPolicy")]
+    [HttpPost("assignRole/{userId}")]
+    public async Task<IActionResult> AssignRoleToUser(string userId, string role)
+    {
+        var result = await _authService.AssignRole(userId, role);
+        
+        if(!result.IsSuccess)
+            return NotFound(new { message = result.Error.Message, details = result.Error.Details });
+        
+        return Ok(new { message = "Role assigned successfully" });
+    }
 }

@@ -49,7 +49,7 @@
             return ResultDto<string>.Failure(_mapper.Map<ErrorResponseDto>(loginResult.Error));
         }
 
-        var token = _tokenService.GenerateJwtToken(loginResult.Data);
+        var token = await _tokenService.GenerateJwtToken(loginResult.Data);
         return ResultDto<string>.Success(token);
     }
 
@@ -65,9 +65,9 @@
         return ResultDto<ICollection<UserDto>>.Success(usersDto);
     }
 
-    public async Task<ResultDto<UserDto>> FindByUserIdASync(string id)
+    public async Task<ResultDto<UserDto>> FindUserById(string id)
     {
-        var result = await _userRepository.FindByUserIdAsync(id);
+        var result = await _userRepository.FindUserById(id);
         if (!result.IsSuccess)
         {
             return ResultDto<UserDto>.Failure(_mapper.Map<ErrorResponseDto>(result.Error));
@@ -92,9 +92,19 @@
         var user = _mapper.Map<ApplicationUser>(registerDto);
         var result = await _userRepository.AddUserAsync(user, registerDto.Password);
 
-        return result.IsSuccess
-            ? ResultDto<bool>.Success(true)
-            : ResultDto<bool>.Failure(_mapper.Map<ErrorResponseDto>(result.Error));
+        if (!result.IsSuccess)
+        {
+            return ResultDto<bool>.Failure(_mapper.Map<ErrorResponseDto>(result.Error));
+        }
+
+        var roleAssignmentResult = await _userRepository.AssignRoleAsync(user, "User");
+
+        if (!roleAssignmentResult.IsSuccess)
+        {
+            return ResultDto<bool>.Failure(_mapper.Map<ErrorResponseDto>(roleAssignmentResult.Error));
+        }
+
+        return ResultDto<bool>.Success(true);
     }
 
     public async Task<ResultDto<bool>> DeleteUserAsync(string userId)
@@ -120,6 +130,23 @@
 
         var user = _mapper.Map<ApplicationUser>(updateDto);
         var result = await _userRepository.UpdateUserAsync(userId, user);
+
+        return result.IsSuccess
+            ? ResultDto<bool>.Success(true)
+            : ResultDto<bool>.Failure(_mapper.Map<ErrorResponseDto>(result.Error));
+    }
+
+     public async Task<ResultDto<bool>> AssignRole(string userId, string role)
+    {
+        var assignedUser = await _userRepository.FindUserById(userId);
+
+        if (!assignedUser.IsSuccess)
+        {
+            return ResultDto<bool>.Failure(_mapper.Map<ErrorResponseDto>(assignedUser.Error));
+        }
+
+        var appUser = _mapper.Map<ApplicationUser>(assignedUser.Data);
+        var result = await _userRepository.AssignRoleAsync(appUser, role);
 
         return result.IsSuccess
             ? ResultDto<bool>.Success(true)
