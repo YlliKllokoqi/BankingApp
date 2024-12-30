@@ -15,3 +15,4 @@ C:\Users\yll_k\Ylli\.NET Projects\BankingApp\Infrastructure\obj\Debug\net8.0\ref
 C:\Users\yll_k\Ylli\.NET Projects\BankingApp\Infrastructure\obj\Debug\net8.0\BankingApp.Infrastructure.pdb
 C:\Users\yll_k\Ylli\.NET Projects\BankingApp\Infrastructure\obj\Debug\net8.0\BankingApp.Infrastructure.genruntimeconfig.cache
 C:\Users\yll_k\Ylli\.NET Projects\BankingApp\Infrastructure\obj\Debug\net8.0\ref\BankingApp.Infrastructure.dll
+C:\Users\yll_k\Ylli\.NET Projects\BankingApp\Infrastructure\obj\Debug\net8.0\BankingApp.Infrastructure.sourcelink.json

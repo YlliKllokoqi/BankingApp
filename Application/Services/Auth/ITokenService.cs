@@ -4,5 +4,5 @@ namespace BankingApp.Application.Services.Auth;
 
 public interface ITokenService
 {
-    public string GenerateJwtToken(ApplicationUser user);
+    public Task<string> GenerateJwtToken(ApplicationUser user);
 }

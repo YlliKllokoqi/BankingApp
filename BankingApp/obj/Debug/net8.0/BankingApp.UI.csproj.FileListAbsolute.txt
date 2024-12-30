@@ -133,3 +133,4 @@ C:\Users\yll_k\Ylli\.NET Projects\BankingApp\BankingApp\bin\Debug\net8.0\Microso
 C:\Users\yll_k\Ylli\.NET Projects\BankingApp\BankingApp\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
 C:\Users\yll_k\Ylli\.NET Projects\BankingApp\BankingApp\bin\Debug\net8.0\FluentValidation.dll
 C:\Users\yll_k\Ylli\.NET Projects\BankingApp\BankingApp\bin\Debug\net8.0\FluentValidation.DependencyInjectionExtensions.dll
+C:\Users\yll_k\Ylli\.NET Projects\BankingApp\BankingApp\obj\Debug\net8.0\BankingApp.UI.sourcelink.json

@@ -17,3 +17,4 @@ C:\Users\yll_k\Ylli\.NET Projects\BankingApp\Application\obj\Debug\net8.0\refint
 C:\Users\yll_k\Ylli\.NET Projects\BankingApp\Application\obj\Debug\net8.0\BankingApp.Application.pdb
 C:\Users\yll_k\Ylli\.NET Projects\BankingApp\Application\obj\Debug\net8.0\BankingApp.Application.genruntimeconfig.cache
 C:\Users\yll_k\Ylli\.NET Projects\BankingApp\Application\obj\Debug\net8.0\ref\BankingApp.Application.dll
+C:\Users\yll_k\Ylli\.NET Projects\BankingApp\Application\obj\Debug\net8.0\BankingApp.Application.sourcelink.json

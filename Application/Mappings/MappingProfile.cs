@@ -8,6 +8,8 @@ public class MappingProfile :Profile
 {
     public MappingProfile()
     {
+        CreateMap(typeof(Result<>), typeof(ResultDto<>)).ReverseMap();
+        CreateMap<ErrorResponse, ErrorResponseDto>().ReverseMap();
         CreateMap<ApplicationUser, LoginDto>().ReverseMap();
         CreateMap<ApplicationUser, UserDto>().ReverseMap();
         CreateMap<ApplicationUser, RegisterDto>().ReverseMap();

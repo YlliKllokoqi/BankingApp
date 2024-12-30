@@ -21,50 +21,67 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Login(LoginDto loginDto)
     {
         var result = await _authService.LoginAsync(loginDto);
-        
-        return Ok(result);
+
+        if (!result.IsSuccess)
+            return BadRequest(new { message = result.Error.Message, details = result.Error.Details });
+
+        return Ok(result.Data);
     }
 
-    [HttpGet]
-    [Route("getAllUsers")]
+    [HttpGet("users")]
     public async Task<IActionResult> GetAllUsers()
     {
         var result = await _authService.GetUsers();
-        
-        return Ok(result);
+
+        if (!result.IsSuccess)
+            return NotFound(new { message = result.Error.Message });
+
+        return Ok(result.Data);
     }
 
-    [HttpGet]
-    [Route("{userId}")]
-    public async Task<IActionResult> GetUser(string userId)
-    {
-        var result = await _authService.FindByUserIdASync(userId);
-
-        return Ok(result);
-    }
-
-    [HttpPost]
-    [Route("register")]
+    [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterDto registerDto)
     {
         var result = await _authService.RegisterUserAsync(registerDto);
-        return result ? Ok("Registration successful") : BadRequest("Registration failed");
+
+        if (!result.IsSuccess)
+            return BadRequest(new { message = result.Error.Message, details = result.Error.Details });
+
+        return Ok(new { message = "Registration successful" });
     }
 
-    [HttpPut]
-    [Route("update/{userId}")]
-    public async Task<IActionResult> Update(string userId, [FromBody]UpdateDto updateDto)
+    [HttpPut("update/{userId}")]
+    public async Task<IActionResult> Update(string userId, UpdateDto updateDto)
     {
         var result = await _authService.UpdateUserAsync(userId, updateDto);
-        return result ? Ok("User data updated successfully") : BadRequest("User data update failed");
+
+        if (!result.IsSuccess)
+            return BadRequest(new { message = result.Error.Message, details = result.Error.Details });
+
+        return Ok(new { message = "User updated successfully" });
     }
 
-    [HttpDelete]
-    [Route("delete")]
-    [Authorize]
+    [Authorize(Policy ="AdminPolicy")]
+    [HttpDelete("delete/{userId}")]
     public async Task<IActionResult> Delete(string userId)
     {
         var result = await _authService.DeleteUserAsync(userId);
-        return result ? Ok("User deleted successfully") : BadRequest("User not found");
+
+        if (!result.IsSuccess)
+            return NotFound(new { message = result.Error.Message, details = result.Error.Details });
+
+        return Ok(new { message = "User deleted successfully" });
+    }
+
+    [Authorize(Policy = "AdminPolicy")]
+    [HttpPost("assignRole/{userId}")]
+    public async Task<IActionResult> AssignRoleToUser(string userId, string role)
+    {
+        var result = await _authService.AssignRole(userId, role);
+        
+        if(!result.IsSuccess)
+            return NotFound(new { message = result.Error.Message, details = result.Error.Details });
+        
+        return Ok(new { message = "Role assigned successfully" });
     }
 }

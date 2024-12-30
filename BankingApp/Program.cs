@@ -13,6 +13,11 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminPolicy", policy => policy.RequireRole("Admin"));
+    options.AddPolicy("UserPolicy", policy => policy.RequireRole("User"));
+});
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo{ Title = "BankingApp", Version = "v1" });
@@ -40,20 +45,10 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
-builder.Services.AddInfrastructure(builder.Configuration);
+await builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication(builder.Configuration);
 
 var app = builder.Build();
-
-//Seed roles
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-    var initializer = services.GetRequiredService<BankingDbInitializer>();
-
-    await BankingDbInitializer.SeedRoles(roleManager);
-}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
