@@ -15,9 +15,9 @@ public class CardController : ControllerBase
     {
         _debitCardService = debitCardService;
     }
-
-    [HttpPost("RequestDebitCard")]
+    
     [Authorize(Policy = "UserPolicy")]
+    [HttpPost("RequestDebitCard")]
     public async Task<IActionResult> RequestDebitCard()
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -31,5 +31,39 @@ public class CardController : ControllerBase
             return BadRequest(result);
 
         return Ok("Debit card Application was successful, your debit card is now pending approval.");
+    }
+
+    [Authorize(Policy = "AdminPolicy")]
+    [HttpPut("approveDebitCard/{debitCardId}")]
+    public async Task<IActionResult> ApproveDebitCard(Guid debitCardId)
+    {
+        var result = await _debitCardService.ApproveDebitCard(debitCardId);
+
+        if (result.IsSuccess)
+        {
+            return Ok("Debit card successfully approved.");
+        }
+        
+        return BadRequest(result);
+    }
+
+    [Authorize]
+    [HttpGet("GetDebitCardDetails")]
+    public async Task<IActionResult> GetDebitCardDetails([FromQuery] string? userId = null)
+    {
+        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var isAdmin = User.IsInRole("Admin");
+
+        if (!string.IsNullOrEmpty(userId) && !isAdmin) 
+            return Forbid();
+        
+        var targetUserId = isAdmin && !string.IsNullOrEmpty(userId) ? userId : currentUserId;
+
+        var result = await _debitCardService.GetDebitCardDetails(targetUserId);
+        
+        if(result.IsSuccess)
+            return Ok(result.Data);
+        
+        return BadRequest(result);
     }
 }

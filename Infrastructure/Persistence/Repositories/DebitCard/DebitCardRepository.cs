@@ -13,9 +13,9 @@ public class DebitCardRepository : IDebitCardRepository
         _context = context;
     }
     
-    public async Task<Result<bool>> RequestDebitCard(string UserId)
+    public async Task<Result<bool>> RequestDebitCard(string userId)
     {
-        var hasDebitCard = _context.DebitCards.AnyAsync(x => x.OwnerId == UserId);
+        var hasDebitCard = _context.DebitCards.AnyAsync(x => x.OwnerId == userId);
         if (hasDebitCard.Result)
         {
             return Result<bool>.Failure(new ErrorResponse
@@ -25,8 +25,8 @@ public class DebitCardRepository : IDebitCardRepository
             });
         }
 
-        var firstName = _context.Users.FirstOrDefaultAsync(x => x.Id == UserId).Result.FirstName;
-        var lastName = _context.Users.FirstOrDefaultAsync(x => x.Id == UserId).Result.LastName;
+        var firstName = _context.Users.FirstOrDefaultAsync(x => x.Id == userId).Result.FirstName;
+        var lastName = _context.Users.FirstOrDefaultAsync(x => x.Id == userId).Result.LastName;
         
         var ownerName = firstName + " " + lastName; 
         var cardNumber = GenerateCardNumber();
@@ -36,7 +36,7 @@ public class DebitCardRepository : IDebitCardRepository
         var newCard = new BankingApp.Domain.Entities.DebitCard
         {
             Id = Guid.NewGuid(),
-            OwnerId = UserId,
+            OwnerId = userId,
             OwnerName = ownerName,
             CardNumber = cardNumber.Result,
             CVV = cvv.Result,
@@ -53,6 +53,64 @@ public class DebitCardRepository : IDebitCardRepository
                 Message = "DEBIT_CARD_FAILED",
                 Details = "Debit card creation failed"
             }); 
+    }
+
+    public async Task<(Result<string>, string)> ApproveDebitCard(Guid debitCardId)
+    {
+        var debitCard = _context.DebitCards.FirstOrDefaultAsync(x => x.Id == debitCardId).Result;
+        
+        if(debitCard == null)
+            return (Result<string>.Failure(new ErrorResponse
+            {
+                Message = "DEBIT_CARD_APPROVAL_FAILED",
+                Details = "debit card does not exist"
+            }), String.Empty);
+
+        if (debitCard.Status == "Active")
+        {
+            return (Result<string>.Failure(new ErrorResponse
+            {
+                Message = "DEBIT_CARD_APPROVAL_FAILED",
+                Details = "Debit card is already active",
+            }), String.Empty);
+        }
+
+        debitCard.Status = "Active";
+        _context.DebitCards.Update(debitCard);
+
+        if (await _context.SaveChangesAsync() > 0)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == debitCard.OwnerId);
+            
+            return (Result<string>.Success("Debbit card has been approved"), user.Email);
+        }
+        else
+        {
+            return (Result<string>.Failure(new ErrorResponse
+            {
+                Message = "DEBIT_CARD_APPROVAL_FAILED",
+                Details = "DB context changes could not be saved",
+            }), String.Empty);
+        }
+
+    }
+
+    public async Task<Result<BankingApp.Domain.Entities.DebitCard>> GetDebitCardDetails(string userId)
+    {
+        var result = await _context.DebitCards.FirstOrDefaultAsync(x => x.OwnerId == userId);
+
+        if (result != null)
+        {
+            return Result<BankingApp.Domain.Entities.DebitCard>.Success(result);
+        }
+        else
+        {
+            return Result<BankingApp.Domain.Entities.DebitCard>.Failure(new ErrorResponse
+            {
+                Message = "DEBIT_CARD_RETREIVAL_FAILED",
+                Details = "Debit card not found"
+            });
+        }
     }
 
     private async Task<string> GenerateIban()
