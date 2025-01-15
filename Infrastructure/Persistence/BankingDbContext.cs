@@ -14,6 +14,14 @@ namespace Infrastructure.Persistence
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            builder.Entity<DebitCard>()
+                .HasOne(x => x.Owner)
+                .WithOne(x => x.DebitCard)
+                .HasForeignKey<DebitCard>(x => x.OwnerId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
+        
+        public DbSet<DebitCard> DebitCards { get; set; }
     }
 }

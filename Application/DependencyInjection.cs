@@ -2,6 +2,8 @@ using System.Reflection;
 using System.Text;
 using BankingApp.Application.Services;
 using BankingApp.Application.Services.Auth;
+using BankingApp.Application.Services.DebitCard;
+using BankingApp.Application.Services.Email;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
@@ -52,6 +54,8 @@ public static class DependencyInjection
         
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<IDebitCardService, DebitCardService>();
+        services.AddScoped<IEmailService, EmailService>();
         
         return services;
     }
