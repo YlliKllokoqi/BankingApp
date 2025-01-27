@@ -1,0 +1,36 @@
+﻿services:
+  bankingapp.ui:
+    depends_on:
+      - bankingapp.database
+    image: bankingapp.ui
+    container_name: banking.api
+    build:
+      context: .
+      dockerfile: UI/Dockerfile
+    ports:
+      - "5000:5000"
+      - "5001:5001"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5000;http://+:5001
+    networks:
+      - banking_network
+      
+  bankingapp.database:
+    image: postgres:latest
+    container_name: bankingapp.database
+    environment:
+      POSTGRES_USER: localhost
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: bankDb
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./.containers/products-db:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - banking_network
+    
+networks:
+  banking_network:
+    driver: bridge
