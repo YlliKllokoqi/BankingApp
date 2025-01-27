@@ -1,0 +1,22 @@
+# This is a generated file. Not intended for manual editing.
+services:
+  bankingapp.ui:
+    build:
+      context: "C:\\Users\\yll_k\\Ylli\\.NET Projects\\BankingApp"
+      dockerfile: "UI/Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Debug/net8.0/BankingApp.UI.dll"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+    image: "bankingapp.ui:dev"
+    ports: []
+    volumes:
+    - "C:\\Users\\yll_k\\Ylli\\.NET Projects\\BankingApp\\UI:/app:rw"
+    - "C:\\Users\\yll_k\\Ylli\\.NET Projects\\BankingApp:/src:rw"
+    - "C:\\Users\\yll_k\\AppData\\Roaming\\Microsoft\\UserSecrets:/root/.microsoft/usersecrets"
+    - "C:\\Users\\yll_k\\.nuget\\packages:/root/.nuget/packages"
+    working_dir: "/app"

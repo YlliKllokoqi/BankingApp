@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34221.43
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BankingApp.UI", "BankingApp\BankingApp.UI.csproj", "{6338AAA3-227A-4718-88D9-83003D9308F6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BankingApp.UI", "UI\BankingApp.UI.csproj", "{6338AAA3-227A-4718-88D9-83003D9308F6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{85461F9B-2020-4975-9F9F-5DAF7062D6C2}"
 EndProject

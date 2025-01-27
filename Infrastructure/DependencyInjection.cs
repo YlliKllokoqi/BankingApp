@@ -12,7 +12,7 @@ public static class DependencyInjection
 {
 	public static async Task<IServiceCollection> AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
 	{
-		services.AddDbContext<BankingDbContext>(options => options.UseNpgsql(configuration["ConnectionStrings:DefaultConnection"]));
+		services.AddDbContext<BankingDbContext>(options => options.UseNpgsql(configuration["ConnectionStrings:DockerConnectionString"]));
 		services.AddIdentityCore<ApplicationUser>(options =>
 			{
 				options.User.RequireUniqueEmail = true;
@@ -32,6 +32,13 @@ public static class DependencyInjection
 		services.AddScoped<IDebitCardRepository, DebitCardRepository>();
 
 		var serviceProvider = services.BuildServiceProvider();
+
+		using (var scope = serviceProvider.CreateScope())
+		{
+			var dbContext = scope.ServiceProvider.GetRequiredService<BankingDbContext>();
+			await dbContext.Database.MigrateAsync();
+		}
+
 		var dbInittializer = serviceProvider.GetRequiredService<BankingDbInitializer>();
 		await dbInittializer.SeedRoles();
 		await dbInittializer.SeedAdminAsync();
