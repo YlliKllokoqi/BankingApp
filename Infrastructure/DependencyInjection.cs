@@ -12,7 +12,7 @@ public static class DependencyInjection
 {
 	public static async Task<IServiceCollection> AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
 	{
-		services.AddDbContext<BankingDbContext>(options => options.UseNpgsql(configuration["ConnectionStrings:DockerConnectionString"]));
+		services.AddDbContext<BankingDbContext>(options => options.UseNpgsql(configuration["ConnectionStrings:LocalhostConnectionString"]));
 		services.AddIdentityCore<ApplicationUser>(options =>
 			{
 				options.User.RequireUniqueEmail = true;
