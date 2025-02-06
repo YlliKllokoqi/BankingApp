@@ -66,4 +66,28 @@ public class CardController : ControllerBase
         
         return BadRequest(result);
     }
+
+    [Authorize]
+    [HttpPut("DepositToBalance/{debitCardId}")]
+    public async Task<IActionResult> DepositToBalance(Guid debitCardId, decimal amount)
+    {
+        var result = await _debitCardService.DepositToBalance(debitCardId, amount);
+
+        if (result.IsSuccess)
+            return Ok(result.Data);
+
+        return BadRequest(result);
+    }
+
+    [Authorize]
+    [HttpPut("WithdrawFromBalance/{debitCardId}")]
+    public async Task<IActionResult> WithdrawFromBalance(Guid debitCardId, decimal amount)
+    {
+        var result = await _debitCardService.WithdrawFromBalance(debitCardId, amount);
+        
+        if(result.IsSuccess)
+            return Ok(result.Data);
+        
+        return BadRequest(result);
+    }
 }

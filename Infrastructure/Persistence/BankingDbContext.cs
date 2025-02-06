@@ -20,6 +20,10 @@ namespace Infrastructure.Persistence
                 .WithOne(x => x.DebitCard)
                 .HasForeignKey<DebitCard>(x => x.OwnerId)
                 .OnDelete(DeleteBehavior.Cascade);
+            
+            builder.Entity<DebitCard>()
+                .Property(x => x.RowVersion)
+                .IsRowVersion();
         }
         
         public DbSet<DebitCard> DebitCards { get; set; }

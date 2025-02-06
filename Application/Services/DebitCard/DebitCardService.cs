@@ -84,4 +84,60 @@ public class DebitCardService : IDebitCardService
             });
         }
     }
+
+    public async Task<ResultDto<string>> DepositToBalance(Guid debitCardId, decimal amount)
+    {
+        if (amount > 3000)
+            return ResultDto<string>.Failure(new ErrorResponseDto
+            {
+                Message = "DEPOSIT_FAILED",
+                Details = "Your deposit exceeded the permitted amount, please contact our administrator"
+            });
+        if(amount < 0)
+            return ResultDto<string>.Failure(new ErrorResponseDto
+            {
+                Message = "DEPOSIT_FAILED",
+                Details = "Negative amount"
+            });
+        
+        var result = await _debitCardRepository.DepositToBalance(debitCardId, amount);
+
+        if (result.IsSuccess)
+        {
+            return ResultDto<string>.Success("Deposit successful");
+        }
+        else
+        {
+            return ResultDto<string>.Failure(new ErrorResponseDto
+            {
+                Message = result.Error.Message,
+                Details = result.Error.Details
+            });
+        }
+    }
+
+    public async Task<ResultDto<string>> WithdrawFromBalance(Guid debitCardId, decimal amount)
+    {
+        if(amount < 10)
+            return ResultDto<string>.Failure(new ErrorResponseDto
+            {
+                Message = "WITHDRAWAL_FAILED",
+                Details = "Please withdraw at least the minimum amount of 10€"
+            });
+        
+        var result = await _debitCardRepository.WithdrawFromBalance(debitCardId, amount);
+
+        if (result.IsSuccess)
+        {
+            return ResultDto<string>.Success("Withdrawal successful, current balance: " + result.Data);
+        }
+        else
+        {
+            return ResultDto<string>.Failure(new ErrorResponseDto
+            {
+                Message = result.Error.Message,
+                Details = result.Error.Details
+            });
+        }
+    }
 }

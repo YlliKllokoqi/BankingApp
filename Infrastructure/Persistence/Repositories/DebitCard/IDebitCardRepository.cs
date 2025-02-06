@@ -6,6 +6,8 @@ public interface IDebitCardRepository
 {
     Task<Result<bool>> RequestDebitCard(string userId);
     Task<(Result<string>, string)> ApproveDebitCard(Guid debitCardId);
-
     Task<Result<BankingApp.Domain.Entities.DebitCard>> GetDebitCardDetails(string userId);
+    Task<Result<string>> DepositToBalance(Guid debitCardId, decimal amount);
+    Task<Result<decimal>> WithdrawFromBalance(Guid debitCardId, decimal amount);
+
 }

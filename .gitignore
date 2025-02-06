@@ -1,0 +1,41 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+**/obj/
+# Rider ignored files
+/contentModel.xml
+/projectSettingsUpdater.xml
+/.idea.BankingApp.iml
+.idea/
+.idea_modules/
+/modules.xml
+# Editor-based HTTP Client requests
+/httpRequests/
+# Datasource local storage ignored files
+/dataSources/
+/dataSources.local.xml
+
+# Ignore build outputs for .NET
+**/bin/
+
+# Visual Studio files
+.vscode/
+.vs/
+*.user
+*.suo
+*.cache
+*.log
+
+# Common build artifacts
+*.dll
+*.exe
+*.pdb
+*.mdb
+*.db
+*.config
+*.TestResults
+
+# MacOS and general system files
+.DS_Store
+Thumbs.db
+
