@@ -113,6 +113,87 @@ public class DebitCardRepository : IDebitCardRepository
         }
     }
 
+    public async Task<Result<string>> DepositToBalance(Guid debitCardId, decimal amount)
+    {
+        for (int retry = 0; retry < 3; retry++)
+        {
+            try
+            {
+                var debitCard = await _context.DebitCards.FirstOrDefaultAsync(d => d.Id == debitCardId);
+
+                if (debitCard == null)
+                    return Result<string>.Failure(new ErrorResponse
+                    {
+                        Message = "DEBIT_CARD_NOT_FOUND",
+                        Details = "Debit card does not exist"
+                    });
+
+                debitCard.Balance += amount;
+                await _context.SaveChangesAsync();
+
+                return Result<string>.Success(amount + " has been deposited to your balance");
+            }
+            catch (DbUpdateConcurrencyException e)
+            {
+                if (retry == 2)
+                    return Result<string>.Failure(new ErrorResponse
+                    {
+                        Message = "DEPOSIT_FAILED",
+                        Details = "Unable to deposit to your balance, please try again"
+                    });
+            }
+        }
+        return Result<string>.Failure(new ErrorResponse
+        {
+            Message = "DEPOSIT_FAILED",
+            Details = "Unable to deposit to your balance, please try again"
+        });
+    }
+
+    public async Task<Result<decimal>> WithdrawFromBalance(Guid debitCardId, decimal amount)
+    {
+        for (int retry = 0; retry < 3; retry++)
+        {
+            var debitCard = await _context.DebitCards.FirstOrDefaultAsync(d => d.Id == debitCardId);
+            try
+            {
+                if(debitCard == null)
+                    return Result<decimal>.Failure(new ErrorResponse
+                    {
+                        Message = "DEBIT_CARD_NOT_FOUND",
+                        Details = "Debit card does not exist"
+                    });
+                
+                if(debitCard.Balance == 0)
+                    return Result<decimal>.Failure(new ErrorResponse
+                    {
+                        Message = "WITHDRAWAL_FAILED",
+                        Details = "You do not have sufficient funds"
+                    });
+                
+                debitCard.Balance = Math.Max(0, debitCard.Balance - amount);
+                
+                await _context.SaveChangesAsync();
+
+                return Result<decimal>.Success(debitCard.Balance);
+            }
+            catch (DbUpdateConcurrencyException e)
+            {
+                if (retry == 2)
+                    return Result<decimal>.Failure(new ErrorResponse
+                    {
+                        Message = "WITHDRAWAL_FAILED",
+                        Details = "Unable to withdraw from your balance, please try again"
+                    });
+            }
+        }
+        return Result<decimal>.Failure(new ErrorResponse
+        {
+            Message = "WITHDRAWAL_FAILED",
+            Details = "Unable to Withdraw from your balance, please try again"
+        });
+    }
+
     private async Task<string> GenerateIban()
     {
         while (true)

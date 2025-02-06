@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace BankingApp.Domain.Entities;
 
 public class DebitCard
@@ -12,4 +14,7 @@ public class DebitCard
     public string OwnerName { get; set; }
     public string OwnerId { get; set; }
     public ApplicationUser Owner { get; set; }
+    
+    [Timestamp]
+    public byte[] RowVersion { get; set; }
 }
