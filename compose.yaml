@@ -2,7 +2,7 @@
   bankingapp.ui:
     depends_on:
       - bankingapp.database
-    image: bankingapp.ui
+    image: yllix/bankingapp-ui:latest
     container_name: banking.api
     build:
       context: .
