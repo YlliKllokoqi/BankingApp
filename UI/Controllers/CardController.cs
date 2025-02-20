@@ -47,6 +47,15 @@ public class CardController : ControllerBase
         return BadRequest(result);
     }
 
+    [Authorize(Policy = "AdminPolicy")]
+    [HttpGet("GetAllDebitCards")]
+    public async Task<IActionResult> GetAllDebitCards()
+    {
+        var result = await _debitCardService.GetAllDebitCards();
+        
+        return Ok(result);
+    }
+
     [Authorize]
     [HttpGet("GetDebitCardDetails")]
     public async Task<IActionResult> GetDebitCardDetails([FromQuery] string? userId = null)

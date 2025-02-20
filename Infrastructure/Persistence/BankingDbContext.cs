@@ -23,7 +23,9 @@ namespace Infrastructure.Persistence
             
             builder.Entity<DebitCard>()
                 .Property(x => x.RowVersion)
-                .IsRowVersion();
+                .IsRowVersion()
+                .IsConcurrencyToken()
+                .ValueGeneratedOnAddOrUpdate();
         }
         
         public DbSet<DebitCard> DebitCards { get; set; }

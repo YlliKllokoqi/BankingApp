@@ -4,6 +4,7 @@ using System;
 using BankingApp.Domain.Entities;
 using Infrastructure.Persistence;
 using Infrastructure.Persistence.Repositories.DebitCard;
+using Infrastructure.Persistence.Repositories.Transactions;
 using Infrastructure.Persistence.Repositories.UserAuth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +13,7 @@ public static class DependencyInjection
 {
 	public static async Task<IServiceCollection> AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
 	{
-		services.AddDbContext<BankingDbContext>(options => options.UseNpgsql(configuration["ConnectionStrings:DockerConnectionString"]));
+		services.AddDbContext<BankingDbContext>(options => options.UseNpgsql(configuration["ConnectionStrings:LocalhostConnectionString"]));
 		services.AddIdentityCore<ApplicationUser>(options =>
 			{
 				options.User.RequireUniqueEmail = true;
@@ -30,6 +31,7 @@ public static class DependencyInjection
 		
 		services.AddScoped<IUserRepository, UserRepository>();
 		services.AddScoped<IDebitCardRepository, DebitCardRepository>();
+		services.AddScoped<ITransactionRepository, TransactionRepository>();
 
 		var serviceProvider = services.BuildServiceProvider();
 

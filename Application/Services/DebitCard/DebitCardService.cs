@@ -24,17 +24,8 @@ public class DebitCardService : IDebitCardService
     public async Task<ResultDto<bool>> RequestDebitCard(string userId)
     {
         var result = await _debitCardRepository.RequestDebitCard(userId);
-
-        if (!result.IsSuccess)
-        {
-            return ResultDto<bool>.Failure(new ErrorResponseDto
-            {
-                Message = result.Error.Message,
-                Details = result.Error.Details
-            });
-        }
-
-        return ResultDto<bool>.Success(true);
+        
+        return _mapper.Map<ResultDto<bool>>(result);
     }
 
     public async Task<ResultDto<string>> ApproveDebitCard(Guid debitCardId)
@@ -45,18 +36,7 @@ public class DebitCardService : IDebitCardService
         {
             var emailResult = await _emailService.SendDebitCardApprovalEmail(result.Item2);
 
-            if (emailResult.IsSuccess)
-            {
-                return ResultDto<string>.Success("Debit Card approved");
-            }
-            else
-            {
-                return ResultDto<string>.Failure(new ErrorResponseDto
-                {
-                    Message = emailResult.Error.Message,
-                    Details = emailResult.Error.Details
-                });
-            }
+            return emailResult;
         }
 
         return ResultDto<string>.Failure(new ErrorResponseDto
@@ -64,6 +44,13 @@ public class DebitCardService : IDebitCardService
             Message = result.Item1.Error.Message,
             Details = result.Item1.Error.Details
         });
+    }
+
+    public async Task<ResultDto<List<DebitCardDto>>> GetAllDebitCards()
+    {
+        var result = await _debitCardRepository.GetAllDebitCards();
+
+        return _mapper.Map<ResultDto<List<DebitCardDto>>>(result);
     }
 
     public async Task<ResultDto<DebitCardDto>> GetDebitCardDetails(string userId)
@@ -101,19 +88,8 @@ public class DebitCardService : IDebitCardService
             });
         
         var result = await _debitCardRepository.DepositToBalance(debitCardId, amount);
-
-        if (result.IsSuccess)
-        {
-            return ResultDto<string>.Success("Deposit successful");
-        }
-        else
-        {
-            return ResultDto<string>.Failure(new ErrorResponseDto
-            {
-                Message = result.Error.Message,
-                Details = result.Error.Details
-            });
-        }
+        
+        return _mapper.Map<ResultDto<string>>(result);
     }
 
     public async Task<ResultDto<string>> WithdrawFromBalance(Guid debitCardId, decimal amount)
@@ -127,17 +103,6 @@ public class DebitCardService : IDebitCardService
         
         var result = await _debitCardRepository.WithdrawFromBalance(debitCardId, amount);
 
-        if (result.IsSuccess)
-        {
-            return ResultDto<string>.Success("Withdrawal successful, current balance: " + result.Data);
-        }
-        else
-        {
-            return ResultDto<string>.Failure(new ErrorResponseDto
-            {
-                Message = result.Error.Message,
-                Details = result.Error.Details
-            });
-        }
+        return _mapper.Map<ResultDto<string>>(result);
     }
 }

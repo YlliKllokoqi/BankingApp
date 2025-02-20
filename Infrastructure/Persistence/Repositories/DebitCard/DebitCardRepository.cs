@@ -95,6 +95,13 @@ public class DebitCardRepository : IDebitCardRepository
 
     }
 
+    public async Task<Result<List<BankingApp.Domain.Entities.DebitCard>>> GetAllDebitCards()
+    {
+        var result = await _context.DebitCards.ToListAsync();
+        
+        return Result<List<BankingApp.Domain.Entities.DebitCard>>.Success(result);
+    }
+
     public async Task<Result<BankingApp.Domain.Entities.DebitCard>> GetDebitCardDetails(string userId)
     {
         var result = await _context.DebitCards.FirstOrDefaultAsync(x => x.OwnerId == userId);
@@ -139,7 +146,7 @@ public class DebitCardRepository : IDebitCardRepository
                     return Result<string>.Failure(new ErrorResponse
                     {
                         Message = "DEPOSIT_FAILED",
-                        Details = "Unable to deposit to your balance, please try again"
+                        Details = "Unable to deposit to your balance, please try again: " + e.Message
                     });
             }
         }
