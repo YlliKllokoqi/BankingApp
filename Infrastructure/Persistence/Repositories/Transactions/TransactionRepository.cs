@@ -14,13 +14,13 @@ public class TransactionRepository : ITransactionRepository
     
     public async Task<Result<bool>> TransferFunds(Transaction transactionModel)
     {
-        using var transaction = await _context.Database.BeginTransactionAsync();
+        await using var transactionState = await _context.Database.BeginTransactionAsync();
 
         try
         {
             var sourceDebitCard = await _context.DebitCards.FirstOrDefaultAsync(d => d.Id == transactionModel.SourceDebitCardId);
             var destinationDebitCard =
-                await _context.DebitCards.FirstOrDefaultAsync(d => d.Id == transactionModel.DestinationDebitCardId);
+                await _context.DebitCards.FirstOrDefaultAsync(d => d.IBAN == transactionModel.IBAN);
 
             if (sourceDebitCard == null || destinationDebitCard == null)
             {
@@ -44,13 +44,31 @@ public class TransactionRepository : ITransactionRepository
             destinationDebitCard.Balance += transactionModel.Amount;
 
             await _context.SaveChangesAsync();
-            await transaction.CommitAsync();
+
+            var recipient = await _context.DebitCards
+                .Where(d => d.IBAN == transactionModel.IBAN).Select(d => d.OwnerName).FirstOrDefaultAsync();
+
+            var transaction = new Transaction
+            {
+                Id = new Guid(),
+                Amount = transactionModel.Amount,
+                Description = transactionModel.Description,
+                SourceDebitCardId = transactionModel.SourceDebitCardId,
+                IBAN = transactionModel.IBAN,
+                Recipient = recipient,
+                Sender = transactionModel.Sender,
+                Date = DateTime.UtcNow
+            };
+            
+            await _context.AddAsync(transaction);
+            await _context.SaveChangesAsync();
+            await transactionState.CommitAsync();
 
             return Result<bool>.Success(true);
         }
         catch (DbUpdateConcurrencyException ex)
         {
-            await transaction.RollbackAsync();
+            await transactionState.RollbackAsync();
             return Result<bool>.Failure(new ErrorResponse
             {
                 Message = "TRANSACTION_FAILED",
@@ -59,7 +77,7 @@ public class TransactionRepository : ITransactionRepository
         }
         catch (Exception ex)
         {
-            await transaction.RollbackAsync();
+            await transactionState.RollbackAsync();
             return Result<bool>.Failure(new ErrorResponse
             {
                 Message = "TRANSACTION_FAILED",

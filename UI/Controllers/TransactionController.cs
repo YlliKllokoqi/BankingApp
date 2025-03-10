@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using BankingApp.Application.DTOs;
 using BankingApp.Application.Services.Transactions;
 using Microsoft.AspNetCore.Authorization;
@@ -20,7 +21,8 @@ public class TransactionController : ControllerBase
     [HttpPost("TransferFunds")]
     public async Task<IActionResult> TransferFunds([FromBody] TransactionDto transactionDto)
     {
-        var result = await _transactionService.TransferFunds(transactionDto);
+        var currentUser = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var result = await _transactionService.TransferFunds(transactionDto, currentUser);
 
         if (result.IsSuccess)
             return Ok("Transaction completed successfully");

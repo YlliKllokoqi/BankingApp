@@ -16,5 +16,6 @@ public class MappingProfile : Profile
         CreateMap<ApplicationUser, UpdateDto>().ReverseMap();
         CreateMap<DebitCard, DebitCardDto>().ReverseMap();
         CreateMap<Transaction, TransactionDto>().ReverseMap();
+        CreateMap<Transaction, GetTransactionDto>().ReverseMap();
     }
 }

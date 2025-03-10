@@ -29,5 +29,6 @@ namespace Infrastructure.Persistence
         }
         
         public DbSet<DebitCard> DebitCards { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
     }
 }

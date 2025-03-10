@@ -16,7 +16,7 @@ public class TransactionsService : ITransactionService
         _repository = repository;
     }
     
-    public async Task<ResultDto<bool>> TransferFunds(TransactionDto transactionDto)
+    public async Task<ResultDto<bool>> TransferFunds(TransactionDto transactionDto, string userId)
     {
         var transaction = _mapper.Map<Transaction>(transactionDto);
         var result = await _repository.TransferFunds(transaction);
