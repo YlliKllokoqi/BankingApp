@@ -29,4 +29,22 @@ public class TransactionController : ControllerBase
         
         return BadRequest(result);
     }
+
+    [HttpGet("GetTransactionHistory")]
+    public async Task<IActionResult> GetTransactionHistory([FromQuery] TransactionQueryDto queryDto)
+    {
+        if (queryDto.StartDate > queryDto.EndDate)
+        {
+            return BadRequest("Start date must be before end date.");
+        }
+
+        if (string.IsNullOrEmpty(queryDto.UserId))
+        {
+            queryDto.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        }
+
+        var transactions = await _transactionService.GetTransactionHistory(queryDto);
+
+        return Ok(transactions);
+    }
 }

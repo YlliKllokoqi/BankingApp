@@ -23,4 +23,27 @@ public class TransactionsService : ITransactionService
 
         return _mapper.Map<ResultDto<bool>>(result);
     }
+
+    public async Task<PagedResult<GetTransactionDto>> GetTransactionHistory(TransactionQueryDto queryDto)
+    {
+        var transactionquery = _mapper.Map<TransactionQuery>(queryDto);
+        var (transactions, totalRecords) = await _repository.GetTransactionHistory(transactionquery);
+
+        var transactionDtos = transactions.Select(t => new GetTransactionDto
+        {
+            Amount = t.Amount,
+            Description = t.Description,
+            Recipient = t.Recipient,
+            Sender = t.Sender,
+            Date = t.Date
+        }).ToList();
+
+        return new PagedResult<GetTransactionDto>
+        {
+            Items = transactionDtos,
+            PageNumber = queryDto.pageNumber,
+            PageSize = queryDto.pageSize,
+            TotalRecords = totalRecords
+        };
+    }
 }

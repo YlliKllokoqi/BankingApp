@@ -1,6 +1,6 @@
 namespace BankingApp.Application.DTOs;
 
-public class TransactionQuery
+public class TransactionQueryDto
 {
     public string? UserId { get; set; }
     public string? CardId { get; set; }

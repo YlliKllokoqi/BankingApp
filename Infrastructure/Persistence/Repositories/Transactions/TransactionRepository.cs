@@ -85,4 +85,36 @@ public class TransactionRepository : ITransactionRepository
             });
         }
     }
+
+    public async Task<(List<Transaction>, int)> GetTransactionHistory(TransactionQuery query)
+    {
+        var userDebitCard = await _context.DebitCards
+            .Where(d => d.OwnerId == query.UserId)
+            .Select(d => new { d.Id, d.IBAN })
+            .FirstOrDefaultAsync();
+
+        if (userDebitCard == null)
+        {
+            return new(new List<Transaction>(), 0);
+        }
+        
+        query.StartDate = DateTime.SpecifyKind(query.StartDate, DateTimeKind.Utc);
+        query.EndDate = DateTime.SpecifyKind(query.EndDate, DateTimeKind.Utc);
+
+
+        var transactionQuery = _context.Transactions
+            .Where(t =>
+                (t.SourceDebitCardId == userDebitCard.Id || t.IBAN == userDebitCard.IBAN)
+                && t.Date >= query.StartDate.ToUniversalTime() && t.Date <= query.EndDate.ToUniversalTime())
+            .OrderByDescending(t => t.Date);
+
+        int totalRecords = await transactionQuery.CountAsync();
+
+        var transactions = await transactionQuery
+            .Skip((query.pageNumber - 1) * query.pageSize)
+            .Take(query.pageSize)
+            .ToListAsync();
+
+        return (transactions, totalRecords);
+    }
 }

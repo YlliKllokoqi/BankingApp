@@ -17,5 +17,6 @@ public class MappingProfile : Profile
         CreateMap<DebitCard, DebitCardDto>().ReverseMap();
         CreateMap<Transaction, TransactionDto>().ReverseMap();
         CreateMap<Transaction, GetTransactionDto>().ReverseMap();
+        CreateMap<TransactionQuery, TransactionQueryDto>().ReverseMap();
     }
 }
